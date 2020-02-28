@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import Essay
-from .serializers import EssaySerializer
+from .models import Essay, Album, Files
+from .serializers import EssaySerializer, AlbumSerializer, FileSerializer
 from rest_framework.filters import SearchFilter
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -22,3 +22,11 @@ class PostViewSet(viewsets.ModelViewSet):
         else:
             qs = qs.none()
         return qs
+
+class ImageViewSet(viewsets.ModelViewSet):
+    queryset = Album.objects.all()
+    serializer_class = AlbumSerializer
+
+class FileViewSet(viewsets.ModelViewSet):
+    queryset = Files.objects.all()
+    serializer_class = FileSerializer
