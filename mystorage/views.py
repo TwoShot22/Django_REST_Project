@@ -2,6 +2,9 @@ from rest_framework import viewsets
 from .models import Essay, Album, Files
 from .serializers import EssaySerializer, AlbumSerializer, FileSerializer
 from rest_framework.filters import SearchFilter
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
+from rest_framework import status
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Essay.objects.all()
@@ -30,3 +33,15 @@ class ImageViewSet(viewsets.ModelViewSet):
 class FileViewSet(viewsets.ModelViewSet):
     queryset = Files.objects.all()
     serializer_class = FileSerializer
+
+    # Parser_Class
+    parser_classes = (MultiPartParser, FormParser) # 우리가 수락할 수 있는 미디어 타입을 가지고 있는 것
+
+    # create() 오버라이딩 -> post()
+    def post(self, request, *args, **kwargs):
+        serializer = FileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=HTTP_201_CREATED)
+        else:
+            return Response(serializer.error, status=HTTP_400_BAD_REQUEST)
